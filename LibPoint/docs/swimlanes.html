@@ -1,0 +1,728 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Library System – Swimlane Diagrams</title><link rel="icon" href="data:,">
+<style>
+:root{--bg:#f9fafb;--fg:#1f2937;--mut:#6b7280;--card:#fff;--bd:#e5e7eb;--l0:#ffffff;--l1:#f3f6fb;--lab:#e8effc;
+--step:#eff6ff;--step-s:#3b82f6;--start:#f0fdf4;--start-s:#22c55e;--dec:#fffbeb;--dec-s:#f59e0b;--err:#fef2f2;--err-s:#ef4444;--end:#f3f4f6;--end-s:#6b7280;--edge:#64748b;
+color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--fg:#e5e7eb;--mut:#94a3b8;--card:#111c33;--bd:#27344f;--l0:#111c33;--l1:#16223d;--lab:#1d2b4a;
+--step:#1e3a5f;--start:#14352a;--dec:#3d3016;--err:#3f1d22;--end:#243049;--edge:#94a3b8;color-scheme:dark}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+main{max-width:1200px;margin:0 auto;padding:1.5rem 1rem}h1{margin:0 0 .3rem;font-size:1.6rem}h2{font-size:1.1rem;margin:0 0 .2rem}
+p{color:var(--mut);margin:.1rem 0 .7rem}.toc{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}.toc a{padding:.25rem .6rem;border:1px solid var(--bd);background:var(--card);border-radius:999px;color:var(--fg);text-decoration:none;font-size:.82rem}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.82rem;color:var(--mut);margin-bottom:1rem}.legend i{display:inline-block;width:22px;height:12px;border:2px solid;margin-right:.35rem;vertical-align:middle}
+section{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:1.2rem}.scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:8px}
+svg{display:block;font-family:inherit}.lane.l0{fill:var(--l0)}.lane.l1{fill:var(--l1)}.lane-label{fill:var(--lab);stroke:var(--bd)}.lane{stroke:var(--bd)}
+.lane-text{fill:var(--fg);font-size:11.5px;font-weight:700}.node-text{fill:var(--fg);font-size:11px}.edge{fill:none;stroke:var(--edge);stroke-width:1.5}.arrow-head{fill:var(--edge)}.edge-label{fill:var(--mut);font-size:10px;font-weight:700}
+.node{stroke-width:1.6}.node.step{fill:var(--step);stroke:var(--step-s)}.node.start{fill:var(--start);stroke:var(--start-s)}.node.dec{fill:var(--dec);stroke:var(--dec-s)}.node.err{fill:var(--err);stroke:var(--err-s)}.node.end{fill:var(--end);stroke:var(--end-s)}
+table.roles{border-collapse:collapse;width:100%;font-size:.85rem}.roles th,.roles td{border:1px solid var(--bd);padding:.4rem .6rem;text-align:center}.roles th:first-child,.roles td:first-child{text-align:left}.roles th{background:var(--lab)}
+code{background:var(--l1);padding:.05rem .3rem;border-radius:4px;font-size:.85em}
+</style></head><body><main>
+<h1>📚 Library System – Swimlane Diagrams</h1>
+<p>One diagram per module. Each row is who or what does the step: the person, the PHP page class, the database, or email.</p>
+<div class="legend"><span><i style="background:var(--start);border-color:var(--start-s);border-radius:8px"></i>Start</span><span><i style="background:var(--step);border-color:var(--step-s)"></i>Step</span><span><i style="background:var(--dec);border-color:var(--dec-s);transform:rotate(0)"></i>Decision</span><span><i style="background:var(--err);border-color:var(--err-s);border-radius:8px"></i>Error / stop</span><span><i style="background:var(--end);border-color:var(--end-s);border-radius:8px"></i>End</span></div>
+<h2>Roles &amp; permissions</h2><div class="scroll"><table class="roles"><tr><th>Capability</th><th>Member</th><th>Librarian</th><th>Chief Librarian</th><th>IT Staff</th><th>System Admin</th></tr>
+<tr><td>Browse, reserve, view own loans</td><td>✓</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+<tr><td>View books &amp; copies</td><td>–</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>Borrow, return, reservations, mark fees paid, send reminders</td><td>–</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>Add / edit / delete books &amp; copies</td><td>–</td><td>–</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>Reports &amp; CSV export</td><td>–</td><td>–</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>Manage users; set roles up to Chief Librarian</td><td>–</td><td>–</td><td>–</td><td>✓</td><td>✓</td></tr>
+<tr><td>Assign IT Staff / System Admin roles, change those accounts, delete users</td><td>–</td><td>–</td><td>–</td><td>–</td><td>✓</td></tr></table></div>
+<nav class="toc"><a href="#m1">1. Access control (every page)</a><a href="#m2">2. Registration with school-email verification</a><a href="#m3">3. Login with email 2FA</a><a href="#m4">4. Profile &amp; logout</a><a href="#m5">5. Member: browse, reserve, cancel</a><a href="#m6">6. Email notifications: due dates &amp; fees</a><a href="#m7">7. Catalog: books &amp; copies</a><a href="#m8">8. Circulation: borrow a book</a><a href="#m9">9. Circulation: return, penalty &amp; fee notice</a><a href="#m10">10. Circulation: reservations</a><a href="#m11">11. Users &amp; roles (IT Staff, System Admin)</a><a href="#m12">12. Reports (Chief Librarian, IT, Admin)</a></nav><section id="m1"><h2>1. Access control (every page)</h2><p>Every request enters <code>index.php</code>; the Router picks one Page class and its guard decides who may see it.</p><div class="scroll"><svg viewBox="0 0 1906 492" width="1906" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1906" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="86.0" class="lane-text" text-anchor="middle">User</text>
+<rect x="0" y="164" width="1906" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">Router &amp; Page class</text>
+<rect x="0" y="328" width="1906" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H330.0 V208 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 208 H520.0" class="edge" marker-end="url(#ar)"/>
+<path d="M662.0 208 H698.0" class="edge" marker-end="url(#ar)"/>
+<text x="666.0" y="203" class="edge-label">Yes</text>
+<path d="M591.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="595.0" y="249.5" class="edge-label">No</text>
+<path d="M832.0 208 H852.0 V372 H872.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1006.0 372 H1024.0 V208 H1042.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1184.0 208 H1220.0" class="edge" marker-end="url(#ar)"/>
+<text x="1188.0" y="203" class="edge-label">Yes</text>
+<path d="M1113.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1117.0" y="249.5" class="edge-label">No</text>
+<path d="M1354.0 208 H1390.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1532.0 208 H1568.0" class="edge" marker-end="url(#ar)"/>
+<text x="1536.0" y="203" class="edge-label">Yes</text>
+<path d="M1461.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1465.0" y="249.5" class="edge-label">No</text>
+<path d="M1702.0 208 H1722.0 V44 H1742.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Request ?page=…</text>
+<rect x="350.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="205.5" class="node-text" text-anchor="middle">Router maps slug to a</text>
+<text x="417.0" y="218.5" class="node-text" text-anchor="middle">Page class</text>
+<polygon points="591.0,178.0 662.0,208 591.0,238.0 520.0,208" class="node dec"/>
+<text x="591.0" y="212.0" class="node-text" text-anchor="middle">Known page?</text>
+<rect x="524.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="591.0" y="288.0" class="node-text" text-anchor="middle">Show 404 page</text>
+<rect x="698.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Guard checks the</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">page’s access level</text>
+<rect x="872.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="369.5" class="node-text" text-anchor="middle">Load user and role</text>
+<text x="939.0" y="382.5" class="node-text" text-anchor="middle">from session id</text>
+<polygon points="1113.0,178.0 1184.0,208 1113.0,238.0 1042.0,208" class="node dec"/>
+<text x="1113.0" y="205.5" class="node-text" text-anchor="middle">Role has</text>
+<text x="1113.0" y="218.5" class="node-text" text-anchor="middle">permission?</text>
+<rect x="1046.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1113.0" y="281.5" class="node-text" text-anchor="middle">Redirect to login or</text>
+<text x="1113.0" y="294.5" class="node-text" text-anchor="middle">own home</text>
+<rect x="1220.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="205.5" class="node-text" text-anchor="middle">If POST: verify CSRF</text>
+<text x="1287.0" y="218.5" class="node-text" text-anchor="middle">token</text>
+<polygon points="1461.0,178.0 1532.0,208 1461.0,238.0 1390.0,208" class="node dec"/>
+<text x="1461.0" y="212.0" class="node-text" text-anchor="middle">Token valid?</text>
+<rect x="1394.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1461.0" y="281.5" class="node-text" text-anchor="middle">Flash “session</text>
+<text x="1461.0" y="294.5" class="node-text" text-anchor="middle">expired”</text>
+<rect x="1568.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="205.5" class="node-text" text-anchor="middle">Run onPost, then</text>
+<text x="1635.0" y="218.5" class="node-text" text-anchor="middle">render page</text>
+<rect x="1742.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1809.0" y="48.0" class="node-text" text-anchor="middle">Page shown</text>
+</svg></div></section><section id="m2"><h2>2. Registration with school-email verification</h2><p>Only <code>@sanbeda-alabang.edu.ph</code> addresses are accepted. No account exists until the emailed code is entered.</p><div class="scroll"><svg viewBox="0 0 2080 656" width="2080" height="656" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="2080" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="86.0" class="lane-text" text-anchor="middle">Visitor</text>
+<rect x="0" y="164" width="2080" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">RegisterPage /</text>
+<text x="78.0" y="258.0" class="lane-text" text-anchor="middle">VerifySignupPage</text>
+<rect x="0" y="328" width="2080" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<rect x="0" y="492" width="2080" height="164" class="lane l1"/>
+<rect x="0" y="492" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="578.0" class="lane-text" text-anchor="middle">Email</text>
+<path d="M310.0 44 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 44 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H694.0" class="edge" marker-end="url(#ar)"/>
+<path d="M836.0 208 H854.0 V372 H872.0" class="edge" marker-end="url(#ar)"/>
+<text x="857.0" y="294.0" class="edge-label">Yes</text>
+<path d="M765.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="769.0" y="249.5" class="edge-label">No</text>
+<path d="M1006.0 372 H1026.0 V536 H1046.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1180.0 536 H1200.0 V44 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1354.0 44 H1374.0 V372 H1394.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1528.0 372 H1546.0 V208 H1564.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1706.0 208 H1724.0 V372 H1742.0" class="edge" marker-end="url(#ar)"/>
+<text x="1727.0" y="294.0" class="edge-label">Yes</text>
+<path d="M1635.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1639.0" y="249.5" class="edge-label">No</text>
+<path d="M1876.0 372 H1896.0 V44 H1916.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Register page</text>
+<rect x="350.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="41.5" class="node-text" text-anchor="middle">Fill name, school</text>
+<text x="417.0" y="54.5" class="node-text" text-anchor="middle">email, password</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="199.0" class="node-text" text-anchor="middle">Validate; email must</text>
+<text x="591.0" y="212.0" class="node-text" text-anchor="middle">end @sanbeda-</text>
+<text x="591.0" y="225.0" class="node-text" text-anchor="middle">alabang.edu.ph</text>
+<polygon points="765.0,178.0 836.0,208 765.0,238.0 694.0,208" class="node dec"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Valid and not yet</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">registered?</text>
+<rect x="698.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="765.0" y="281.5" class="node-text" text-anchor="middle">Show errors on the</text>
+<text x="765.0" y="294.5" class="node-text" text-anchor="middle">form</text>
+<rect x="872.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="369.5" class="node-text" text-anchor="middle">Save pending sign-up</text>
+<text x="939.0" y="382.5" class="node-text" text-anchor="middle">(no account yet)</text>
+<rect x="1046.0" y="513.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="533.5" class="node-text" text-anchor="middle">Email 6-digit code to</text>
+<text x="1113.0" y="546.5" class="node-text" text-anchor="middle">the school address</text>
+<rect x="1220.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="48.0" class="node-text" text-anchor="middle">Type the code</text>
+<rect x="1394.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="369.5" class="node-text" text-anchor="middle">Load pending row,</text>
+<text x="1461.0" y="382.5" class="node-text" text-anchor="middle">check code</text>
+<polygon points="1635.0,178.0 1706.0,208 1635.0,238.0 1564.0,208" class="node dec"/>
+<text x="1635.0" y="205.5" class="node-text" text-anchor="middle">Code correct and</text>
+<text x="1635.0" y="218.5" class="node-text" text-anchor="middle">valid?</text>
+<rect x="1568.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1635.0" y="281.5" class="node-text" text-anchor="middle">Show error, count</text>
+<text x="1635.0" y="294.5" class="node-text" text-anchor="middle">attempt, retry</text>
+<rect x="1742.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1809.0" y="363.0" class="node-text" text-anchor="middle">Create member</text>
+<text x="1809.0" y="376.0" class="node-text" text-anchor="middle">account, delete</text>
+<text x="1809.0" y="389.0" class="node-text" text-anchor="middle">pending row</text>
+<rect x="1916.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1983.0" y="48.0" class="node-text" text-anchor="middle">Go to Login page</text>
+</svg></div></section><section id="m3"><h2>3. Login with email 2FA</h2><p>Two steps: password first, then a 6-digit code sent by email (10-minute expiry, 5 tries, resend every 60 s).</p><div class="scroll"><svg viewBox="0 0 2254 656" width="2254" height="656" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="2254" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="86.0" class="lane-text" text-anchor="middle">User</text>
+<rect x="0" y="164" width="2254" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">LoginPage /</text>
+<text x="78.0" y="258.0" class="lane-text" text-anchor="middle">VerifyOtpPage</text>
+<rect x="0" y="328" width="2254" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<rect x="0" y="492" width="2254" height="164" class="lane l1"/>
+<rect x="0" y="492" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="578.0" class="lane-text" text-anchor="middle">Email</text>
+<path d="M310.0 44 H330.0 V208 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 208 H504.0 V372 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 372 H676.0 V208 H694.0" class="edge" marker-end="url(#ar)"/>
+<path d="M836.0 208 H872.0" class="edge" marker-end="url(#ar)"/>
+<text x="840.0" y="203" class="edge-label">Yes</text>
+<path d="M765.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="769.0" y="249.5" class="edge-label">No</text>
+<path d="M1006.0 208 H1026.0 V372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1180.0 372 H1200.0 V536 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1354.0 536 H1374.0 V44 H1394.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1528.0 44 H1548.0 V372 H1568.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1702.0 372 H1720.0 V208 H1738.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1880.0 208 H1916.0" class="edge" marker-end="url(#ar)"/>
+<text x="1884.0" y="203" class="edge-label">Yes</text>
+<path d="M1809.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1813.0" y="249.5" class="edge-label">No</text>
+<path d="M2050.0 208 H2070.0 V44 H2090.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="41.5" class="node-text" text-anchor="middle">Enter email and</text>
+<text x="243.0" y="54.5" class="node-text" text-anchor="middle">password</text>
+<rect x="350.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="205.5" class="node-text" text-anchor="middle">Check school-email</text>
+<text x="417.0" y="218.5" class="node-text" text-anchor="middle">domain and format</text>
+<rect x="524.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="376.0" class="node-text" text-anchor="middle">Find user by email</text>
+<polygon points="765.0,178.0 836.0,208 765.0,238.0 694.0,208" class="node dec"/>
+<text x="765.0" y="212.0" class="node-text" text-anchor="middle">Password matches?</text>
+<rect x="698.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="765.0" y="281.5" class="node-text" text-anchor="middle">Show “Invalid email</text>
+<text x="765.0" y="294.5" class="node-text" text-anchor="middle">or password”</text>
+<rect x="872.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="205.5" class="node-text" text-anchor="middle">Create random 6-digit</text>
+<text x="939.0" y="218.5" class="node-text" text-anchor="middle">code</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">Store hashed code</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">with expiry</text>
+<rect x="1220.0" y="513.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="533.5" class="node-text" text-anchor="middle">Email the code to the</text>
+<text x="1287.0" y="546.5" class="node-text" text-anchor="middle">user</text>
+<rect x="1394.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="48.0" class="node-text" text-anchor="middle">Type the code</text>
+<rect x="1568.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="369.5" class="node-text" text-anchor="middle">Load code, expiry,</text>
+<text x="1635.0" y="382.5" class="node-text" text-anchor="middle">attempts</text>
+<polygon points="1809.0,178.0 1880.0,208 1809.0,238.0 1738.0,208" class="node dec"/>
+<text x="1809.0" y="205.5" class="node-text" text-anchor="middle">Code correct and</text>
+<text x="1809.0" y="218.5" class="node-text" text-anchor="middle">valid?</text>
+<rect x="1742.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1809.0" y="281.5" class="node-text" text-anchor="middle">Show error, count</text>
+<text x="1809.0" y="294.5" class="node-text" text-anchor="middle">attempt, retry</text>
+<rect x="1916.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1983.0" y="205.5" class="node-text" text-anchor="middle">Delete code, start</text>
+<text x="1983.0" y="218.5" class="node-text" text-anchor="middle">new session</text>
+<rect x="2090.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="2157.0" y="41.5" class="node-text" text-anchor="middle">Admin → Dashboard,</text>
+<text x="2157.0" y="54.5" class="node-text" text-anchor="middle">Member → Home</text>
+</svg></div></section><section id="m4"><h2>4. Profile &amp; logout</h2><p>Shared by members and admins.</p><div class="scroll"><svg viewBox="0 0 1906 492" width="1906" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1906" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="86.0" class="lane-text" text-anchor="middle">User</text>
+<rect x="0" y="164" width="1906" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">ProfilePage /</text>
+<text x="78.0" y="258.0" class="lane-text" text-anchor="middle">LogoutPage</text>
+<rect x="0" y="328" width="1906" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H330.0 V208 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 208 H504.0 V44 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 44 H678.0 V208 H698.0" class="edge" marker-end="url(#ar)"/>
+<path d="M832.0 208 H868.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1010.0 208 H1028.0 V372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<text x="1031.0" y="294.0" class="edge-label">Yes</text>
+<path d="M939.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="943.0" y="249.5" class="edge-label">No</text>
+<path d="M1180.0 372 H1200.0 V208 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1354.0 208 H1374.0 V44 H1394.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1528.0 44 H1548.0 V208 H1568.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1702.0 208 H1722.0 V44 H1742.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Profile</text>
+<rect x="350.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="205.5" class="node-text" text-anchor="middle">Show name, email,</text>
+<text x="417.0" y="218.5" class="node-text" text-anchor="middle">address</text>
+<rect x="524.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="48.0" class="node-text" text-anchor="middle">Edit name and address</text>
+<rect x="698.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Validate name and</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">address length</text>
+<polygon points="939.0,178.0 1010.0,208 939.0,238.0 868.0,208" class="node dec"/>
+<text x="939.0" y="212.0" class="node-text" text-anchor="middle">Valid?</text>
+<rect x="872.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="939.0" y="281.5" class="node-text" text-anchor="middle">Show errors on the</text>
+<text x="939.0" y="294.5" class="node-text" text-anchor="middle">form</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">UPDATE users SET</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">name, address</text>
+<rect x="1220.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="205.5" class="node-text" text-anchor="middle">Flash “Profile</text>
+<text x="1287.0" y="218.5" class="node-text" text-anchor="middle">updated”</text>
+<rect x="1394.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="48.0" class="node-text" text-anchor="middle">Click Logout</text>
+<rect x="1568.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="205.5" class="node-text" text-anchor="middle">Verify CSRF, destroy</text>
+<text x="1635.0" y="218.5" class="node-text" text-anchor="middle">session</text>
+<rect x="1742.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1809.0" y="48.0" class="node-text" text-anchor="middle">Back to Login</text>
+</svg></div></section><section id="m5"><h2>5. Member: browse, reserve, cancel</h2><p>Members search the catalog and reserve a title; stock is the number of available copies.</p><div class="scroll"><svg viewBox="0 0 2080 492" width="2080" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="2080" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="86.0" class="lane-text" text-anchor="middle">Member</text>
+<rect x="0" y="164" width="2080" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">BooksPage /</text>
+<text x="78.0" y="258.0" class="lane-text" text-anchor="middle">ReservationsPage</text>
+<rect x="0" y="328" width="2080" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H330.0 V208 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 208 H504.0 V372 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 372 H678.0 V208 H698.0" class="edge" marker-end="url(#ar)"/>
+<path d="M832.0 208 H852.0 V44 H872.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1006.0 44 H1026.0 V208 H1046.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1180.0 208 H1216.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1358.0 208 H1376.0 V372 H1394.0" class="edge" marker-end="url(#ar)"/>
+<text x="1379.0" y="294.0" class="edge-label">Yes</text>
+<path d="M1287.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1291.0" y="249.5" class="edge-label">No</text>
+<path d="M1528.0 372 H1548.0 V208 H1568.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1702.0 208 H1722.0 V44 H1742.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1876.0 44 H1896.0 V372 H1916.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Books catalog</text>
+<rect x="350.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="205.5" class="node-text" text-anchor="middle">Validate search text</text>
+<text x="417.0" y="218.5" class="node-text" text-anchor="middle">(max 100)</text>
+<rect x="524.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="369.5" class="node-text" text-anchor="middle">Query books +</text>
+<text x="591.0" y="382.5" class="node-text" text-anchor="middle">available copy count</text>
+<rect x="698.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Show catalog with</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">stock badges</text>
+<rect x="872.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="48.0" class="node-text" text-anchor="middle">Click Reserve</text>
+<rect x="1046.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="205.5" class="node-text" text-anchor="middle">Check CSRF token and</text>
+<text x="1113.0" y="218.5" class="node-text" text-anchor="middle">book exists</text>
+<polygon points="1287.0,178.0 1358.0,208 1287.0,238.0 1216.0,208" class="node dec"/>
+<text x="1287.0" y="205.5" class="node-text" text-anchor="middle">Not borrowed or</text>
+<text x="1287.0" y="218.5" class="node-text" text-anchor="middle">reserved already?</text>
+<rect x="1220.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1287.0" y="288.0" class="node-text" text-anchor="middle">Show error message</text>
+<rect x="1394.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="369.5" class="node-text" text-anchor="middle">INSERT reservation</text>
+<text x="1461.0" y="382.5" class="node-text" text-anchor="middle">(pending)</text>
+<rect x="1568.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="205.5" class="node-text" text-anchor="middle">Flash success, open</text>
+<text x="1635.0" y="218.5" class="node-text" text-anchor="middle">Reservations</text>
+<rect x="1742.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1809.0" y="41.5" class="node-text" text-anchor="middle">Click Cancel</text>
+<text x="1809.0" y="54.5" class="node-text" text-anchor="middle">(optional)</text>
+<rect x="1916.0" y="349.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1983.0" y="369.5" class="node-text" text-anchor="middle">Status → cancelled</text>
+<text x="1983.0" y="382.5" class="node-text" text-anchor="middle">(own only)</text>
+</svg></div></section><section id="m6"><h2>6. Email notifications: due dates &amp; fees</h2><p>Runs daily from <code>notify.php</code> (Task Scheduler / cron) or from the dashboard’s “Send reminders now” button. One email per member lists books due soon, overdue books and unpaid fees; a log prevents repeats.</p><div class="scroll"><svg viewBox="0 0 1558 656" width="1558" height="656" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1558" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="80.0" class="lane-text" text-anchor="middle">Scheduler / Staff</text>
+<rect x="0" y="164" width="1558" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">NotificationService</text>
+<rect x="0" y="328" width="1558" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<rect x="0" y="492" width="1558" height="164" class="lane l1"/>
+<rect x="0" y="492" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="578.0" class="lane-text" text-anchor="middle">Email</text>
+<path d="M310.0 44 H330.0 V372 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 372 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 372 H678.0 V208 H698.0" class="edge" marker-end="url(#ar)"/>
+<path d="M832.0 208 H868.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1010.0 208 H1028.0 V536 H1046.0" class="edge" marker-end="url(#ar)"/>
+<text x="1031.0" y="376.0" class="edge-label">Yes</text>
+<path d="M939.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="943.0" y="249.5" class="edge-label">No</text>
+<path d="M1180.0 536 H1200.0 V372 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1354.0 372 H1374.0 V44 H1394.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="41.5" class="node-text" text-anchor="middle">Daily job or “Send</text>
+<text x="243.0" y="54.5" class="node-text" text-anchor="middle">reminders now”</text>
+<rect x="350.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="369.5" class="node-text" text-anchor="middle">Find loans due soon,</text>
+<text x="417.0" y="382.5" class="node-text" text-anchor="middle">overdue, unpaid fees</text>
+<rect x="524.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="369.5" class="node-text" text-anchor="middle">Skip items already</text>
+<text x="591.0" y="382.5" class="node-text" text-anchor="middle">notified (log)</text>
+<rect x="698.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Group the items per</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">member</text>
+<polygon points="939.0,178.0 1010.0,208 939.0,238.0 868.0,208" class="node dec"/>
+<text x="939.0" y="212.0" class="node-text" text-anchor="middle">Anything to send?</text>
+<rect x="872.0" y="261.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="939.0" y="288.0" class="node-text" text-anchor="middle">Stop</text>
+<rect x="1046.0" y="513.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="533.5" class="node-text" text-anchor="middle">Email member: due /</text>
+<text x="1113.0" y="546.5" class="node-text" text-anchor="middle">overdue / fee list</text>
+<rect x="1220.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="376.0" class="node-text" text-anchor="middle">Log each item sent</text>
+<rect x="1394.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1461.0" y="48.0" class="node-text" text-anchor="middle">Summary: emails sent</text>
+</svg></div></section><section id="m7"><h2>7. Catalog: books &amp; copies</h2><p>Chief Librarian, IT Staff and System Admin manage the catalog. Librarians can only view it. Each physical copy has its own Book ID (e.g. BK0007-02); only an <em>available</em> copy can be lent.</p><div class="scroll"><svg viewBox="0 0 2254 492" width="2254" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="2254" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="80.0" class="lane-text" text-anchor="middle">Chief Librarian /</text>
+<text x="78.0" y="94.0" class="lane-text" text-anchor="middle">IT / Admin</text>
+<rect x="0" y="164" width="2254" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="238.0" class="lane-text" text-anchor="middle">AdminBooks /</text>
+<text x="78.0" y="252.0" class="lane-text" text-anchor="middle">BookForm / Copies</text>
+<text x="78.0" y="266.0" class="lane-text" text-anchor="middle">pages</text>
+<rect x="0" y="328" width="2254" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 44 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H694.0" class="edge" marker-end="url(#ar)"/>
+<path d="M836.0 208 H854.0 V372 H872.0" class="edge" marker-end="url(#ar)"/>
+<text x="857.0" y="294.0" class="edge-label">Yes</text>
+<path d="M765.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="769.0" y="249.5" class="edge-label">No</text>
+<path d="M1006.0 372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1180.0 372 H1200.0 V44 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1354.0 44 H1374.0 V372 H1394.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1528.0 372 H1548.0 V44 H1568.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1702.0 44 H1720.0 V208 H1738.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1880.0 208 H1898.0 V372 H1916.0" class="edge" marker-end="url(#ar)"/>
+<text x="1901.0" y="294.0" class="edge-label">No</text>
+<path d="M1809.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1813.0" y="249.5" class="edge-label">Yes</text>
+<path d="M2050.0 372 H2070.0 V44 H2090.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Books list</text>
+<rect x="350.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="35.0" class="node-text" text-anchor="middle">Add book: title,</text>
+<text x="417.0" y="48.0" class="node-text" text-anchor="middle">author, ISBN, fee,</text>
+<text x="417.0" y="61.0" class="node-text" text-anchor="middle">copies</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="212.0" class="node-text" text-anchor="middle">Validate fields</text>
+<polygon points="765.0,178.0 836.0,208 765.0,238.0 694.0,208" class="node dec"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Valid and ISBN</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">unique?</text>
+<rect x="698.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="765.0" y="281.5" class="node-text" text-anchor="middle">Show errors on the</text>
+<text x="765.0" y="294.5" class="node-text" text-anchor="middle">form</text>
+<rect x="872.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="376.0" class="node-text" text-anchor="middle">INSERT book</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">Create copies</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">BK0007-01, -02 …</text>
+<rect x="1220.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="41.5" class="node-text" text-anchor="middle">Open 🏷️ Copies for</text>
+<text x="1287.0" y="54.5" class="node-text" text-anchor="middle">the book</text>
+<rect x="1394.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="369.5" class="node-text" text-anchor="middle">Load every copy +</text>
+<text x="1461.0" y="382.5" class="node-text" text-anchor="middle">current borrower</text>
+<rect x="1568.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="41.5" class="node-text" text-anchor="middle">Add copies or set</text>
+<text x="1635.0" y="54.5" class="node-text" text-anchor="middle">Lost / Damaged</text>
+<polygon points="1809.0,178.0 1880.0,208 1809.0,238.0 1738.0,208" class="node dec"/>
+<text x="1809.0" y="205.5" class="node-text" text-anchor="middle">Copy currently on</text>
+<text x="1809.0" y="218.5" class="node-text" text-anchor="middle">loan?</text>
+<rect x="1742.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1809.0" y="281.5" class="node-text" text-anchor="middle">Blocked: copy is</text>
+<text x="1809.0" y="294.5" class="node-text" text-anchor="middle">borrowed</text>
+<rect x="1916.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1983.0" y="369.5" class="node-text" text-anchor="middle">Insert or update copy</text>
+<text x="1983.0" y="382.5" class="node-text" text-anchor="middle">rows</text>
+<rect x="2090.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="2157.0" y="41.5" class="node-text" text-anchor="middle">Only available copies</text>
+<text x="2157.0" y="54.5" class="node-text" text-anchor="middle">can be lent</text>
+</svg></div></section><section id="m8"><h2>8. Circulation: borrow a book</h2><p>Any staff role can lend. One specific copy is lent: leave Copy on auto-assign or pick an exact Book ID.</p><div class="scroll"><svg viewBox="0 0 2080 492" width="2080" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="2080" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="74.0" class="lane-text" text-anchor="middle">Librarian / Chief /</text>
+<text x="78.0" y="88.0" class="lane-text" text-anchor="middle">IT / Admin</text>
+<rect x="0" y="164" width="2080" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="250.0" class="lane-text" text-anchor="middle">AdminBorrowPage</text>
+<rect x="0" y="328" width="2080" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 44 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H694.0" class="edge" marker-end="url(#ar)"/>
+<path d="M836.0 208 H854.0 V372 H872.0" class="edge" marker-end="url(#ar)"/>
+<text x="857.0" y="294.0" class="edge-label">Yes</text>
+<path d="M765.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="769.0" y="249.5" class="edge-label">No</text>
+<path d="M1006.0 372 H1024.0 V208 H1042.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1184.0 208 H1202.0 V372 H1220.0" class="edge" marker-end="url(#ar)"/>
+<text x="1205.0" y="294.0" class="edge-label">Yes</text>
+<path d="M1113.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1117.0" y="249.5" class="edge-label">No</text>
+<path d="M1354.0 372 H1394.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1528.0 372 H1568.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1702.0 372 H1722.0 V208 H1742.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1876.0 208 H1896.0 V44 H1916.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Borrow form</text>
+<rect x="350.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="41.5" class="node-text" text-anchor="middle">Pick member, book,</text>
+<text x="417.0" y="54.5" class="node-text" text-anchor="middle">copy, dates</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="205.5" class="node-text" text-anchor="middle">Validate dates; loan</text>
+<text x="591.0" y="218.5" class="node-text" text-anchor="middle">≤ 30 days</text>
+<polygon points="765.0,178.0 836.0,208 765.0,238.0 694.0,208" class="node dec"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Under limit, no</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">duplicate?</text>
+<rect x="698.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="765.0" y="281.5" class="node-text" text-anchor="middle">Show error on the</text>
+<text x="765.0" y="294.5" class="node-text" text-anchor="middle">form</text>
+<rect x="872.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="369.5" class="node-text" text-anchor="middle">Lock chosen or first</text>
+<text x="939.0" y="382.5" class="node-text" text-anchor="middle">available copy</text>
+<polygon points="1113.0,178.0 1184.0,208 1113.0,238.0 1042.0,208" class="node dec"/>
+<text x="1113.0" y="212.0" class="node-text" text-anchor="middle">Copy found?</text>
+<rect x="1046.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1113.0" y="281.5" class="node-text" text-anchor="middle">Roll back, ask to</text>
+<text x="1113.0" y="294.5" class="node-text" text-anchor="middle">pick again</text>
+<rect x="1220.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="369.5" class="node-text" text-anchor="middle">Set copy status =</text>
+<text x="1287.0" y="382.5" class="node-text" text-anchor="middle">borrowed</text>
+<rect x="1394.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="369.5" class="node-text" text-anchor="middle">INSERT loan with Book</text>
+<text x="1461.0" y="382.5" class="node-text" text-anchor="middle">ID and fee</text>
+<rect x="1568.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="369.5" class="node-text" text-anchor="middle">Mark member’s</text>
+<text x="1635.0" y="382.5" class="node-text" text-anchor="middle">reservation claimed</text>
+<rect x="1742.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1809.0" y="205.5" class="node-text" text-anchor="middle">Commit, flash “Book</text>
+<text x="1809.0" y="218.5" class="node-text" text-anchor="middle">ID: BK0001-02”</text>
+<rect x="1916.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1983.0" y="41.5" class="node-text" text-anchor="middle">Loan shown with its</text>
+<text x="1983.0" y="54.5" class="node-text" text-anchor="middle">Book ID</text>
+</svg></div></section><section id="m9"><h2>9. Circulation: return, penalty &amp; fee notice</h2><p>Returning frees the exact copy that was lent. A late return records the penalty and emails a fee notice to the member.</p><div class="scroll"><svg viewBox="0 0 1906 656" width="1906" height="656" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1906" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="74.0" class="lane-text" text-anchor="middle">Librarian / Chief /</text>
+<text x="78.0" y="88.0" class="lane-text" text-anchor="middle">IT / Admin</text>
+<rect x="0" y="164" width="1906" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">AdminBorrowedPage</text>
+<rect x="0" y="328" width="1906" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<rect x="0" y="492" width="1906" height="164" class="lane l1"/>
+<rect x="0" y="492" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="578.0" class="lane-text" text-anchor="middle">Email</text>
+<path d="M310.0 44 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 44 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H694.0" class="edge" marker-end="url(#ar)"/>
+<path d="M836.0 208 H872.0" class="edge" marker-end="url(#ar)"/>
+<text x="840.0" y="203" class="edge-label">Yes</text>
+<path d="M765.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="769.0" y="249.5" class="edge-label">No</text>
+<path d="M1006.0 208 H1026.0 V372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1180.0 372 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1354.0 372 H1374.0 V208 H1394.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1528.0 208 H1548.0 V536 H1568.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1702.0 536 H1722.0 V44 H1742.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="41.5" class="node-text" text-anchor="middle">Click Return on a</text>
+<text x="243.0" y="54.5" class="node-text" text-anchor="middle">loan</text>
+<rect x="350.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="48.0" class="node-text" text-anchor="middle">Choose return date</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="199.0" class="node-text" text-anchor="middle">Check date (not</text>
+<text x="591.0" y="212.0" class="node-text" text-anchor="middle">future, ≥ borrow</text>
+<text x="591.0" y="225.0" class="node-text" text-anchor="middle">date)</text>
+<polygon points="765.0,178.0 836.0,208 765.0,238.0 694.0,208" class="node dec"/>
+<text x="765.0" y="205.5" class="node-text" text-anchor="middle">Valid, loan</text>
+<text x="765.0" y="218.5" class="node-text" text-anchor="middle">active?</text>
+<rect x="698.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="765.0" y="288.0" class="node-text" text-anchor="middle">Show error</text>
+<rect x="872.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="939.0" y="205.5" class="node-text" text-anchor="middle">Penalty = ₱10 × days</text>
+<text x="939.0" y="218.5" class="node-text" text-anchor="middle">late</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">Mark loan returned,</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">save penalty</text>
+<rect x="1220.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1287.0" y="369.5" class="node-text" text-anchor="middle">Set that copy back to</text>
+<text x="1287.0" y="382.5" class="node-text" text-anchor="middle">available</text>
+<rect x="1394.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1461.0" y="205.5" class="node-text" text-anchor="middle">Commit, show penalty</text>
+<text x="1461.0" y="218.5" class="node-text" text-anchor="middle">amount</text>
+<rect x="1568.0" y="513.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1635.0" y="533.5" class="node-text" text-anchor="middle">If late: email fee</text>
+<text x="1635.0" y="546.5" class="node-text" text-anchor="middle">notice to member</text>
+<rect x="1742.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1809.0" y="41.5" class="node-text" text-anchor="middle">Collect penalty, then</text>
+<text x="1809.0" y="54.5" class="node-text" text-anchor="middle">Mark Paid</text>
+</svg></div></section><section id="m10"><h2>10. Circulation: reservations</h2><p>Any staff role sees every member’s reservations.</p><div class="scroll"><svg viewBox="0 0 1384 492" width="1384" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1384" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="74.0" class="lane-text" text-anchor="middle">Librarian / Chief /</text>
+<text x="78.0" y="88.0" class="lane-text" text-anchor="middle">IT / Admin</text>
+<rect x="0" y="164" width="1384" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="244.0" class="lane-text" text-anchor="middle">AdminReservationsPa</text>
+<text x="78.0" y="258.0" class="lane-text" text-anchor="middle">ge</text>
+<rect x="0" y="328" width="1384" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H330.0 V372 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 372 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H678.0 V44 H698.0" class="edge" marker-end="url(#ar)"/>
+<path d="M832.0 44 H850.0 V208 H868.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1010.0 208 H1028.0 V372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<text x="1031.0" y="294.0" class="edge-label">Yes</text>
+<path d="M939.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="943.0" y="249.5" class="edge-label">No</text>
+<path d="M1180.0 372 H1200.0 V44 H1220.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Reservations</text>
+<rect x="350.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="369.5" class="node-text" text-anchor="middle">Load reservations +</text>
+<text x="417.0" y="382.5" class="node-text" text-anchor="middle">stock</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="205.5" class="node-text" text-anchor="middle">Show status and</text>
+<text x="591.0" y="218.5" class="node-text" text-anchor="middle">availability</text>
+<rect x="698.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="41.5" class="node-text" text-anchor="middle">Click Mark Ready or</text>
+<text x="765.0" y="54.5" class="node-text" text-anchor="middle">Cancel</text>
+<polygon points="939.0,178.0 1010.0,208 939.0,238.0 868.0,208" class="node dec"/>
+<text x="939.0" y="212.0" class="node-text" text-anchor="middle">Status allows it?</text>
+<rect x="872.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="939.0" y="288.0" class="node-text" text-anchor="middle">Show error</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">UPDATE reservation</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">status</text>
+<rect x="1220.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1287.0" y="41.5" class="node-text" text-anchor="middle">Member sees the new</text>
+<text x="1287.0" y="54.5" class="node-text" text-anchor="middle">status</text>
+</svg></div></section><section id="m11"><h2>11. Users &amp; roles (IT Staff, System Admin)</h2><p>Both can search users and change roles. IT Staff may only manage Members, Librarians and Chief Librarians. Only a System Admin can assign the IT Staff / System Admin roles, change those accounts, or delete users.</p><div class="scroll"><svg viewBox="0 0 1558 492" width="1558" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1558" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="80.0" class="lane-text" text-anchor="middle">IT Staff / System</text>
+<text x="78.0" y="94.0" class="lane-text" text-anchor="middle">Admin</text>
+<rect x="0" y="164" width="1558" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="250.0" class="lane-text" text-anchor="middle">AdminUsersPage</text>
+<rect x="0" y="328" width="1558" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H330.0 V372 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 372 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H678.0 V44 H698.0" class="edge" marker-end="url(#ar)"/>
+<path d="M832.0 44 H850.0 V208 H868.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1010.0 208 H1028.0 V372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<text x="1031.0" y="294.0" class="edge-label">Yes</text>
+<path d="M939.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="943.0" y="249.5" class="edge-label">No</text>
+<path d="M1180.0 372 H1198.0 V208 H1216.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1358.0 208 H1376.0 V44 H1394.0" class="edge" marker-end="url(#ar)"/>
+<text x="1379.0" y="130.0" class="edge-label">No</text>
+<path d="M1287.0 238.0 V261.0" class="edge" marker-end="url(#ar)"/>
+<text x="1291.0" y="249.5" class="edge-label">Yes</text>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="41.5" class="node-text" text-anchor="middle">Open Users, type a</text>
+<text x="243.0" y="54.5" class="node-text" text-anchor="middle">search</text>
+<rect x="350.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="376.0" class="node-text" text-anchor="middle">Find by name or email</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="205.5" class="node-text" text-anchor="middle">Show users with role</text>
+<text x="591.0" y="218.5" class="node-text" text-anchor="middle">and actions</text>
+<rect x="698.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="48.0" class="node-text" text-anchor="middle">Change role or Delete</text>
+<polygon points="939.0,178.0 1010.0,208 939.0,238.0 868.0,208" class="node dec"/>
+<text x="939.0" y="205.5" class="node-text" text-anchor="middle">Allowed for my</text>
+<text x="939.0" y="218.5" class="node-text" text-anchor="middle">role?</text>
+<rect x="872.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="939.0" y="288.0" class="node-text" text-anchor="middle">Show error</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">UPDATE role or DELETE</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">user</text>
+<polygon points="1287.0,178.0 1358.0,208 1287.0,238.0 1216.0,208" class="node dec"/>
+<text x="1287.0" y="205.5" class="node-text" text-anchor="middle">Delete blocked by</text>
+<text x="1287.0" y="218.5" class="node-text" text-anchor="middle">history?</text>
+<rect x="1220.0" y="261.0" width="134" height="46" rx="23.0" class="node err"/>
+<text x="1287.0" y="281.5" class="node-text" text-anchor="middle">“Cannot delete: has</text>
+<text x="1287.0" y="294.5" class="node-text" text-anchor="middle">history”</text>
+<rect x="1394.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1461.0" y="48.0" class="node-text" text-anchor="middle">List refreshed</text>
+</svg></div></section><section id="m12"><h2>12. Reports (Chief Librarian, IT, Admin)</h2><p>Totals, top borrowers, mark penalties paid, CSV export (includes Book IDs). Librarians do not see this page.</p><div class="scroll"><svg viewBox="0 0 1384 492" width="1384" height="492" role="img" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="arrow-head"/></marker></defs>
+<rect x="0" y="0" width="1384" height="164" class="lane l0"/>
+<rect x="0" y="0" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="80.0" class="lane-text" text-anchor="middle">Chief Librarian /</text>
+<text x="78.0" y="94.0" class="lane-text" text-anchor="middle">IT / Admin</text>
+<rect x="0" y="164" width="1384" height="164" class="lane l1"/>
+<rect x="0" y="164" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="250.0" class="lane-text" text-anchor="middle">AdminReportPage</text>
+<rect x="0" y="328" width="1384" height="164" class="lane l0"/>
+<rect x="0" y="328" width="156" height="164" class="lane-label"/>
+<text x="78.0" y="414.0" class="lane-text" text-anchor="middle">Database</text>
+<path d="M310.0 44 H330.0 V372 H350.0" class="edge" marker-end="url(#ar)"/>
+<path d="M484.0 372 H504.0 V208 H524.0" class="edge" marker-end="url(#ar)"/>
+<path d="M658.0 208 H678.0 V44 H698.0" class="edge" marker-end="url(#ar)"/>
+<path d="M832.0 44 H850.0 V208 H868.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1010.0 208 H1028.0 V372 H1046.0" class="edge" marker-end="url(#ar)"/>
+<text x="1031.0" y="294.0" class="edge-label">Mark Paid</text>
+<path d="M1010.0 208 H1028.0 V284 H1046.0" class="edge" marker-end="url(#ar)"/>
+<text x="1031.0" y="250.0" class="edge-label">Export</text>
+<path d="M1180.0 372 H1200.0 V44 H1220.0" class="edge" marker-end="url(#ar)"/>
+<path d="M1180.0 284 H1200.0 V120 H1220.0" class="edge" marker-end="url(#ar)"/>
+<rect x="176.0" y="21.0" width="134" height="46" rx="23.0" class="node start"/>
+<text x="243.0" y="48.0" class="node-text" text-anchor="middle">Open Reports</text>
+<rect x="350.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="417.0" y="363.0" class="node-text" text-anchor="middle">Aggregate loans,</text>
+<text x="417.0" y="376.0" class="node-text" text-anchor="middle">penalties, top</text>
+<text x="417.0" y="389.0" class="node-text" text-anchor="middle">borrowers</text>
+<rect x="524.0" y="185.0" width="134" height="46" rx="6" class="node step"/>
+<text x="591.0" y="205.5" class="node-text" text-anchor="middle">Render totals and</text>
+<text x="591.0" y="218.5" class="node-text" text-anchor="middle">full table</text>
+<rect x="698.0" y="21.0" width="134" height="46" rx="6" class="node step"/>
+<text x="765.0" y="41.5" class="node-text" text-anchor="middle">Click Mark Paid or</text>
+<text x="765.0" y="54.5" class="node-text" text-anchor="middle">Export CSV</text>
+<polygon points="939.0,178.0 1010.0,208 939.0,238.0 868.0,208" class="node dec"/>
+<text x="939.0" y="212.0" class="node-text" text-anchor="middle">Which button?</text>
+<rect x="1046.0" y="349.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="369.5" class="node-text" text-anchor="middle">Set date_paid (unpaid</text>
+<text x="1113.0" y="382.5" class="node-text" text-anchor="middle">penalties only)</text>
+<rect x="1046.0" y="261.0" width="134" height="46" rx="6" class="node step"/>
+<text x="1113.0" y="288.0" class="node-text" text-anchor="middle">Stream CSV file</text>
+<rect x="1220.0" y="21.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1287.0" y="48.0" class="node-text" text-anchor="middle">Report refreshed</text>
+<rect x="1220.0" y="97.0" width="134" height="46" rx="23.0" class="node end"/>
+<text x="1287.0" y="124.0" class="node-text" text-anchor="middle">CSV downloaded</text>
+</svg></div></section>
+</main></body></html>
